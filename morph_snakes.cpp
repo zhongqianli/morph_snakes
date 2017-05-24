@@ -48,6 +48,9 @@ void gborders(const cv::Mat &image, cv::Mat &gI, double alpha, double sigma)
     cv::add(grad_x, grad_y, grad);
     cv::sqrt(grad, grad);
 
+//    cv::Mat angle;
+//    cv::cartToPolar(grad_x, grad_y, grad, angle);
+
     // g(I)
     gI = alpha*grad + 1e-20;
     cv::sqrt(gI, gI);
