@@ -71,7 +71,7 @@ int main()
         for(int j=0; j<gI_64F.cols; ++j)
         {
             if(gI_64F.at<double>(i,j) > gI_threshold/abs(gI_balloon_v))
-                gI_threshold_mask.at<double>(i,j) = 255;
+                gI_threshold_mask.at<double>(i,j) = 1;
             else
                 gI_threshold_mask.at<double>(i,j) = 0;
         }
