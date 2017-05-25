@@ -99,6 +99,7 @@ void gborders(const cv::Mat &image, cv::Mat &gI, double alpha, double sigma)
  */
 void morph_gac(const cv::Mat &gI_threshold_mask, const cv::Mat &derivative_gI_X, const cv::Mat &derivative_gI_Y, cv::Mat &u, double gI_balloon_v)
 {
+    // step.1
     cv::Mat aux;
     cv::Mat se = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(3,3));
 
@@ -115,6 +116,7 @@ void morph_gac(const cv::Mat &gI_threshold_mask, const cv::Mat &derivative_gI_X,
 //        u.convertTo(u, CV_64FC1);
     }
 
+    // step.2
     cv::Mat derivative_u_X, derivative_u_Y;
     calc_derivative(u, derivative_u_X, derivative_u_Y);
     cv::Mat res = derivative_gI_X.mul(derivative_u_X) + derivative_gI_Y.mul(derivative_u_Y);
@@ -181,4 +183,107 @@ void calc_derivative(const cv::Mat &image, cv::Mat &derivative_X, cv::Mat &deriv
 //    cv::Scharr(image, derivative_Y, ddepth, 1, 0, scale, delta, cv::BORDER_DEFAULT);
     cv::Sobel(image, derivative_Y, ddepth, 0, 1, 3, scale, delta, cv::BORDER_DEFAULT);
 
+}
+
+/**
+ * @brief IS
+ * @param u: mask
+ */
+
+void IS(cv::Mat &u)
+{
+    std::vector<cv::Mat> P(4);
+
+    int p0[3][3] = {
+        {1, 0, 0},
+        {0, 1, 0},
+        {0, 0, 1}
+    };
+    P[0] = cv::Mat(3, 3, CV_8UC1, p0);
+
+    int p1[3][3] = {
+        {0, 1, 0},
+        {0, 1, 0},
+        {0, 1, 0}
+    };
+    P[1] = cv::Mat(3, 3, CV_8UC1, p1);
+
+    int p2[3][3] = {
+        {0, 0, 1},
+        {0, 1, 0},
+        {1, 0, 0}
+    };
+    P[2] = cv::Mat(3, 3, CV_8UC1, p2);
+
+    int p3[3][3] = {
+        {0, 0, 0},
+        {1, 1, 1},
+        {0, 0, 0}
+    };
+    P[3] = cv::Mat(3, 3, CV_8UC1, p3);
+
+    cv::vector<cv::Mat> aux(4);
+    cv::Mat res = cv::Mat::ones(u.size(), u.type());
+    for(int i=0; i<4; ++i)
+    {
+        cv::erode(u, aux[i], P[i]);
+        res = res.mul(aux[i]);
+    }
+    u = res.clone();
+}
+
+/**
+ * @brief SI
+ * @param u: mask
+ */
+void SI(cv::Mat &u)
+{
+    std::vector<cv::Mat> P(4);
+
+    int p0[3][3] = {
+        {1, 0, 0},
+        {0, 1, 0},
+        {0, 0, 1}
+    };
+    P[0] = cv::Mat(3, 3, CV_8UC1, p0);
+
+    int p1[3][3] = {
+        {0, 1, 0},
+        {0, 1, 0},
+        {0, 1, 0}
+    };
+    P[1] = cv::Mat(3, 3, CV_8UC1, p1);
+
+    int p2[3][3] = {
+        {0, 0, 1},
+        {0, 1, 0},
+        {1, 0, 0}
+    };
+    P[2] = cv::Mat(3, 3, CV_8UC1, p2);
+
+    int p3[3][3] = {
+        {0, 0, 0},
+        {1, 1, 1},
+        {0, 0, 0}
+    };
+    P[3] = cv::Mat(3, 3, CV_8UC1, p3);
+
+    cv::vector<cv::Mat> aux(4);
+    cv::Mat res = cv::Mat::zeros(u.size(), u.type());
+    for(int i=0; i<4; ++i)
+    {
+        cv::dilate(u, aux[i], P[i]);
+        res = res + aux[i];
+    }
+    u = res.clone();
+}
+
+/**
+ * @brief SIoIS: smoothing force; step.3
+ * @param u: mask
+ */
+void SIoIS(cv::Mat &u)
+{
+    IS(u);
+    SI(u);
 }
