@@ -37,7 +37,7 @@ int main()
 //    image_64F = image_64F;
 
     Mat gI;
-    Mat gI_64F(image.size(), image_64F.type(), cv::Scalar(0));
+    Mat gI_64F(image_64F.size(), image_64F.type(), cv::Scalar(0));
     double alpha = 2;
     double sigma = 2;
 
@@ -59,35 +59,29 @@ int main()
     int num_smoothing = 1;
     double gI_threshold = 0.17;
     double gI_balloon_v = 1;
-    int num_iters = 80;
+    int num_iters = 200;
 
     Mat mask_64F;
     mask.convertTo(mask_64F, image_64F.type());
 
-    cv::Mat gI_threshold_mask(gI_64F.size(), gI_64F.type(), cv::Scalar(0));
-    // max = 1; min = 0.06
-    for(int i=0; i<gI_64F.rows; ++i)
-    {
-        for(int j=0; j<gI_64F.cols; ++j)
-        {
-            if(gI_64F.at<double>(i,j) > gI_threshold/abs(gI_balloon_v))
-                gI_threshold_mask.at<double>(i,j) = 1;
-            else
-                gI_threshold_mask.at<double>(i,j) = 0;
-        }
-    }
+    cv::Mat gI_threshold_mask(gI_64F.size(), CV_8UC1, cv::Scalar(0));
+    get_gI_threshold_mask(gI_64F, gI_threshold_mask, gI_threshold, gI_balloon_v);
 
-    imshow("gI_threshold_mask", gI_threshold_mask);
+//    imshow("gI_threshold_mask", gI_threshold_mask);
+
+    cv::Mat derivative_gI_X(image_64F.size(), image_64F.type(), cv::Scalar(0));
+    cv::Mat derivative_gI_Y(image_64F.size(), image_64F.type(), cv::Scalar(0));
+    get_derivative_gI(gI_64F, derivative_gI_X, derivative_gI_Y);
 
     for(int i=0; i<num_iters; ++i)
     {
-//        morph_gac(gI_64F, mask_64F, num_smoothing, gI_threshold, gI_balloon_v);
+        morph_gac(gI_threshold_mask, derivative_gI_X, derivative_gI_Y, mask_64F, gI_balloon_v);
     }
 
     cout << "finish" << endl;
 
 //    imshow("gI", gI_64F);
-//    imshow("mask_64F", mask_64F);
+    imshow("mask_64F", mask_64F);
 
 
 

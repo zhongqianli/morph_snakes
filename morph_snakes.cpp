@@ -14,15 +14,15 @@ using namespace std;
  */
 void gborders(const cv::Mat &image, cv::Mat &gI, double alpha, double sigma)
 {
-//    int width = image.cols;
-//    int height = image.rows;
+    //    int width = image.cols;
+    //    int height = image.rows;
 
-//    cout << image.size() << ", " << image.type() << ", " << image.channels() << endl;
+    //    cout << image.size() << ", " << image.type() << ", " << image.channels() << endl;
 
     cv::Mat gaus_blur_image(image.size(), image.type(), cv::Scalar(0));
     cv::GaussianBlur(image, gaus_blur_image, cv::Size(0,0), sigma, sigma);
 
-//    cout<< "gaus_blur_image:" << gaus_blur_image.size() << ", " << gaus_blur_image.type() << ", " << gaus_blur_image.channels() << endl;
+    //    cout<< "gaus_blur_image:" << gaus_blur_image.size() << ", " << gaus_blur_image.type() << ", " << gaus_blur_image.channels() << endl;
 
     // gradient
     int scale = 1;
@@ -31,19 +31,19 @@ void gborders(const cv::Mat &image, cv::Mat &gI, double alpha, double sigma)
 
     cv::Mat grad(image.size(), image.type(), cv::Scalar(0));
     cv::Mat grad_x(image.size(), image.type(), cv::Scalar(0)), grad_y(image.size(), image.type(), cv::Scalar(0));
-//    cv::Mat abs_grad_x(image.size(), image.type()), abs_grad_y(image.size(), image.type());
+    //    cv::Mat abs_grad_x(image.size(), image.type()), abs_grad_y(image.size(), image.type());
 
     // Scharr function , 3x3, as fast but more accurate than the standar Sobel function
-//    cv::Scharr(gaus_blur_image, grad_x, ddepth, 1, 0, scale, delta, cv::BORDER_DEFAULT);
+    //    cv::Scharr(gaus_blur_image, grad_x, ddepth, 1, 0, scale, delta, cv::BORDER_DEFAULT);
     cv::Sobel(gaus_blur_image, grad_x, ddepth, 1, 0, 3, scale, delta, cv::BORDER_DEFAULT);
-//    cv::convertScaleAbs(grad_x, abs_grad_x);
+    //    cv::convertScaleAbs(grad_x, abs_grad_x);
 
-//    cout<< "grad_x:" << grad_x.size() << ", " << grad_x.type() << ", " << grad_x.channels() << endl;
-//    cout<< "abs_grad_x:" << abs_grad_x.size() << ", " << abs_grad_x.type() << ", " << abs_grad_x.channels() << endl;
+    //    cout<< "grad_x:" << grad_x.size() << ", " << grad_x.type() << ", " << grad_x.channels() << endl;
+    //    cout<< "abs_grad_x:" << abs_grad_x.size() << ", " << abs_grad_x.type() << ", " << abs_grad_x.channels() << endl;
 
-//    cv::Scharr(gaus_blur_image, grad_y, ddepth, 1, 0, scale, delta, cv::BORDER_DEFAULT);
+    //    cv::Scharr(gaus_blur_image, grad_y, ddepth, 1, 0, scale, delta, cv::BORDER_DEFAULT);
     cv::Sobel(gaus_blur_image, grad_y, ddepth, 0, 1, 3, scale, delta, cv::BORDER_DEFAULT);
-//    cv::convertScaleAbs(grad_y, abs_grad_y);
+    //    cv::convertScaleAbs(grad_y, abs_grad_y);
 
     // gradient
     cv::pow(grad_x, 2, grad_x);
@@ -51,46 +51,99 @@ void gborders(const cv::Mat &image, cv::Mat &gI, double alpha, double sigma)
     cv::add(grad_x, grad_y, grad);
     cv::sqrt(grad, grad);
 
-//    cv::Mat angle;
-//    cv::cartToPolar(grad_x, grad_y, grad, angle);
+    //    cv::Mat angle;
+    //    cv::cartToPolar(grad_x, grad_y, grad, angle);
 
     // g(I)
     gI = alpha*grad + 1e-20;
     cv::sqrt(gI, gI);
     cv::pow(gI, -1, gI);
 
-//    cout<< "grad_x:" << grad_x.size() << ", " << grad_x.type() << ", " << grad_x.channels() << endl;
-//    cout<< "grad:" << grad.size() << ", " << grad.type() << ", " << grad.channels() << endl;
+    //    cout<< "grad_x:" << grad_x.size() << ", " << grad_x.type() << ", " << grad_x.channels() << endl;
+    //    cout<< "grad:" << grad.size() << ", " << grad.type() << ", " << grad.channels() << endl;
 
-//    addWeighted( abs_grad_x, 0.5, abs_grad_y, 0.5, 0, grad );
+    //    addWeighted( abs_grad_x, 0.5, abs_grad_y, 0.5, 0, grad );
 
-//    for(int i=0; i<width; ++i)
-//    {
-//        double *grad_i = grad.ptr<double>(i);
-//        double *gI_i = gI.ptr<double>(i);
-//        for(int j=0; j<height; ++j)
-//        {
-//            gI_i[j] = 1.0 /  std::sqrt(1e-20 + alpha*grad_i[j]);
-//        }
-//    }
+    //    for(int i=0; i<width; ++i)
+    //    {
+    //        double *grad_i = grad.ptr<double>(i);
+    //        double *gI_i = gI.ptr<double>(i);
+    //        for(int j=0; j<height; ++j)
+    //        {
+    //            gI_i[j] = 1.0 /  std::sqrt(1e-20 + alpha*grad_i[j]);
+    //        }
+    //    }
 
-//    cout << grad.size() << ", " << grad.type() << ", " << grad.channels() << endl;
-//    cout << tmp.size() << ", " << tmp.type() << ", " << tmp.channels() << endl;
+    //    cout << grad.size() << ", " << grad.type() << ", " << grad.channels() << endl;
+    //    cout << tmp.size() << ", " << tmp.type() << ", " << tmp.channels() << endl;
 
-//    gI = grad.clone();
+    //    gI = grad.clone();
 
-//    for(int i=0; i<height; ++i)
-//    {
-//        for(int j=0; j<width; ++j)
-//        {
-//            gI.at<uchar>(i,j) = 1.0 /  sqrt(1.0 + alpha * grad.at<uchar>(i,j));
-//        }
-//    }
+    //    for(int i=0; i<height; ++i)
+    //    {
+    //        for(int j=0; j<width; ++j)
+    //        {
+    //            gI.at<uchar>(i,j) = 1.0 /  sqrt(1.0 + alpha * grad.at<uchar>(i,j));
+    //        }
+    //    }
 
 }
 
-void morph_gac(const cv::Mat &gI, const cv::Mat &gI_threshold_mask, cv::Mat &u, double gI_balloon_v)
-{
+/**
+ * @brief morph_gac
+ * @param gI
+ * @param gI_threshold_mask
+ * @param u: mask; result
+ * @param gI_balloon_v: dilate or erode ?
+ */
 
+void morph_gac(const cv::Mat &gI_threshold_mask, const cv::Mat &derivative_gI_X, const cv::Mat &derivative_gI_Y, cv::Mat &u, double gI_balloon_v)
+{
+    cv::Mat aux;
+    cv::Mat se = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(3,3));
+
+    if(gI_balloon_v > 0)
+    {
+        cv::dilate(u, aux, se);
+        aux.copyTo(u, gI_threshold_mask);
+        u.convertTo(u, CV_64FC1);
+    }
+    else if(gI_balloon_v < 0)
+    {
+        cv::erode(u, aux, se);
+        aux.copyTo(u, gI_threshold_mask);
+        u.convertTo(u, CV_64FC1);
+    }
+
+}
+
+void get_gI_threshold_mask(const cv::Mat &gI, cv::Mat &gI_threshold_mask, double gI_threshold, double gI_balloon_v)
+{
+    // max = 1; min = 0.06
+    for(int i=0; i<gI.rows; ++i)
+    {
+        for(int j=0; j<gI.cols; ++j)
+        {
+            if(gI.at<double>(i,j) > gI_threshold/abs(gI_balloon_v))
+                gI_threshold_mask.at<uchar>(i,j) = 255;
+            else
+                gI_threshold_mask.at<uchar>(i,j) = 0;
+        }
+    }
+}
+
+void get_derivative_gI(const cv::Mat &gI, cv::Mat &derivative_gI_X, cv::Mat &derivative_gI_Y)
+{
+    // gradient
+    int scale = 1;
+    int delta = 0;
+    int ddepth = gI.type();
+
+    // Scharr function , 3x3, as fast but more accurate than the standar Sobel function
+    //    cv::Scharr(gaus_blur_image, grad_x, ddepth, 1, 0, scale, delta, cv::BORDER_DEFAULT);
+    cv::Sobel(gI, derivative_gI_X, ddepth, 1, 0, 3, scale, delta, cv::BORDER_DEFAULT);
+
+    //    cv::Scharr(gaus_blur_image, grad_y, ddepth, 1, 0, scale, delta, cv::BORDER_DEFAULT);
+    cv::Sobel(gI, derivative_gI_Y, ddepth, 0, 1, 3, scale, delta, cv::BORDER_DEFAULT);
 
 }
