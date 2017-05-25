@@ -71,17 +71,19 @@ int main()
 
     cv::Mat derivative_gI_X(image_64F.size(), image_64F.type(), cv::Scalar(0));
     cv::Mat derivative_gI_Y(image_64F.size(), image_64F.type(), cv::Scalar(0));
-    get_derivative_gI(gI_64F, derivative_gI_X, derivative_gI_Y);
+    calc_derivative(gI_64F, derivative_gI_X, derivative_gI_Y);
 
     for(int i=0; i<num_iters; ++i)
     {
         morph_gac(gI_threshold_mask, derivative_gI_X, derivative_gI_Y, mask_64F, gI_balloon_v);
+        imshow("mask_64F", mask_64F);
+        waitKey(1);
     }
 
     cout << "finish" << endl;
 
 //    imshow("gI", gI_64F);
-    imshow("mask_64F", mask_64F);
+
 
 
 

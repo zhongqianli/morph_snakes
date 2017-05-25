@@ -91,12 +91,12 @@ void gborders(const cv::Mat &image, cv::Mat &gI, double alpha, double sigma)
 
 /**
  * @brief morph_gac
- * @param gI
  * @param gI_threshold_mask
- * @param u: mask; result
- * @param gI_balloon_v: dilate or erode ?
+ * @param derivative_gI_X
+ * @param derivative_gI_Y
+ * @param u: mask
+ * @param gI_balloon_v: >0 ? dilate : erode
  */
-
 void morph_gac(const cv::Mat &gI_threshold_mask, const cv::Mat &derivative_gI_X, const cv::Mat &derivative_gI_Y, cv::Mat &u, double gI_balloon_v)
 {
     cv::Mat aux;
@@ -106,17 +106,47 @@ void morph_gac(const cv::Mat &gI_threshold_mask, const cv::Mat &derivative_gI_X,
     {
         cv::dilate(u, aux, se);
         aux.copyTo(u, gI_threshold_mask);
-        u.convertTo(u, CV_64FC1);
+//        u.convertTo(u, CV_64FC1);
     }
     else if(gI_balloon_v < 0)
     {
         cv::erode(u, aux, se);
         aux.copyTo(u, gI_threshold_mask);
-        u.convertTo(u, CV_64FC1);
+//        u.convertTo(u, CV_64FC1);
     }
 
+    cv::Mat derivative_u_X, derivative_u_Y;
+    calc_derivative(u, derivative_u_X, derivative_u_Y);
+    cv::Mat res = derivative_gI_X.mul(derivative_u_X) + derivative_gI_Y.mul(derivative_u_Y);
+    res.convertTo(res, CV_8UC1);
+
+//    cv::imshow("res test", res);
+
+//    cv::waitKey(1);
+
+    for(int i=0; i<res.rows; ++i)
+    {
+        for(int j=0; j<res.cols; ++j)
+        {
+            if(res.at<uchar>(i,j) > 0)
+            {
+                u.at<double>(i,j) = 255;
+            }
+            else if(res.at<uchar>(i,j) < 0)
+            {
+                u.at<double>(i,j) = 0;
+            }
+        }
+    }
 }
 
+/**
+ * @brief get_gI_threshold_mask
+ * @param gI
+ * @param gI_threshold_mask
+ * @param gI_threshold
+ * @param gI_balloon_v
+ */
 void get_gI_threshold_mask(const cv::Mat &gI, cv::Mat &gI_threshold_mask, double gI_threshold, double gI_balloon_v)
 {
     // max = 1; min = 0.06
@@ -132,18 +162,23 @@ void get_gI_threshold_mask(const cv::Mat &gI, cv::Mat &gI_threshold_mask, double
     }
 }
 
-void get_derivative_gI(const cv::Mat &gI, cv::Mat &derivative_gI_X, cv::Mat &derivative_gI_Y)
+/**
+ * @brief get_derivative_gI
+ * @param gI
+ * @param derivative_gI_X
+ * @param derivative_gI_Y
+ */
+void calc_derivative(const cv::Mat &image, cv::Mat &derivative_X, cv::Mat &derivative_Y)
 {
-    // gradient
     int scale = 1;
     int delta = 0;
-    int ddepth = gI.type();
+    int ddepth = image.type();
 
     // Scharr function , 3x3, as fast but more accurate than the standar Sobel function
-    //    cv::Scharr(gaus_blur_image, grad_x, ddepth, 1, 0, scale, delta, cv::BORDER_DEFAULT);
-    cv::Sobel(gI, derivative_gI_X, ddepth, 1, 0, 3, scale, delta, cv::BORDER_DEFAULT);
+//    cv::Scharr(image, derivative_X, ddepth, 1, 0, scale, delta, cv::BORDER_DEFAULT);
+    cv::Sobel(image, derivative_X, ddepth, 1, 0, 3, scale, delta, cv::BORDER_DEFAULT);
 
-    //    cv::Scharr(gaus_blur_image, grad_y, ddepth, 1, 0, scale, delta, cv::BORDER_DEFAULT);
-    cv::Sobel(gI, derivative_gI_Y, ddepth, 0, 1, 3, scale, delta, cv::BORDER_DEFAULT);
+//    cv::Scharr(image, derivative_Y, ddepth, 1, 0, scale, delta, cv::BORDER_DEFAULT);
+    cv::Sobel(image, derivative_Y, ddepth, 0, 1, 3, scale, delta, cv::BORDER_DEFAULT);
 
 }
