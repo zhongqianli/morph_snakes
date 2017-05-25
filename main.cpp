@@ -37,7 +37,7 @@ int main()
 //    image_64F = image_64F;
 
     Mat gI;
-    Mat gI_64F(image.size(), CV_64FC1, cv::Scalar(0));
+    Mat gI_64F(image.size(), image_64F.type(), cv::Scalar(0));
     double alpha = 2;
     double sigma = 2;
 
@@ -53,10 +53,41 @@ int main()
 
 //    gI_64F.convertTo(gI, CV_8UC1);
 
-    imwrite("E:/0-myWorkSpace/matlab_IrisianCapture_exp/result.bmp", gI_64F);
+
+//    imwrite("E:/0-myWorkSpace/matlab_IrisianCapture_exp/result.bmp", gI_64F);
+
+    int num_smoothing = 1;
+    double gI_threshold = 0.17;
+    double gI_balloon_v = 1;
+    int num_iters = 80;
+
+    Mat mask_64F;
+    mask.convertTo(mask_64F, image_64F.type());
+
+    cv::Mat gI_threshold_mask(gI_64F.size(), gI_64F.type(), cv::Scalar(0));
+    // max = 1; min = 0.06
+    for(int i=0; i<gI_64F.rows; ++i)
+    {
+        for(int j=0; j<gI_64F.cols; ++j)
+        {
+            if(gI_64F.at<double>(i,j) > gI_threshold/abs(gI_balloon_v))
+                gI_threshold_mask.at<double>(i,j) = 255;
+            else
+                gI_threshold_mask.at<double>(i,j) = 0;
+        }
+    }
+
+    imshow("gI_threshold_mask", gI_threshold_mask);
+
+    for(int i=0; i<num_iters; ++i)
+    {
+//        morph_gac(gI_64F, mask_64F, num_smoothing, gI_threshold, gI_balloon_v);
+    }
+
     cout << "finish" << endl;
 
-    imshow("gI", gI_64F);
+//    imshow("gI", gI_64F);
+//    imshow("mask_64F", mask_64F);
 
 
 

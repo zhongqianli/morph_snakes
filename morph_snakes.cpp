@@ -6,7 +6,7 @@
 using namespace std;
 
 /**
- * @brief gborders
+ * @brief gborders: g(I)
  * @param image: CV_64FC1, 1 channel
  * @param gI: CV_64FC1, 1 channel, g(I)
  * @param alpha: g(I) parameter
@@ -33,12 +33,15 @@ void gborders(const cv::Mat &image, cv::Mat &gI, double alpha, double sigma)
     cv::Mat grad_x(image.size(), image.type(), cv::Scalar(0)), grad_y(image.size(), image.type(), cv::Scalar(0));
 //    cv::Mat abs_grad_x(image.size(), image.type()), abs_grad_y(image.size(), image.type());
 
+    // Scharr function , 3x3, as fast but more accurate than the standar Sobel function
+//    cv::Scharr(gaus_blur_image, grad_x, ddepth, 1, 0, scale, delta, cv::BORDER_DEFAULT);
     cv::Sobel(gaus_blur_image, grad_x, ddepth, 1, 0, 3, scale, delta, cv::BORDER_DEFAULT);
 //    cv::convertScaleAbs(grad_x, abs_grad_x);
 
 //    cout<< "grad_x:" << grad_x.size() << ", " << grad_x.type() << ", " << grad_x.channels() << endl;
 //    cout<< "abs_grad_x:" << abs_grad_x.size() << ", " << abs_grad_x.type() << ", " << abs_grad_x.channels() << endl;
 
+//    cv::Scharr(gaus_blur_image, grad_y, ddepth, 1, 0, scale, delta, cv::BORDER_DEFAULT);
     cv::Sobel(gaus_blur_image, grad_y, ddepth, 0, 1, 3, scale, delta, cv::BORDER_DEFAULT);
 //    cv::convertScaleAbs(grad_y, abs_grad_y);
 
@@ -83,5 +86,11 @@ void gborders(const cv::Mat &image, cv::Mat &gI, double alpha, double sigma)
 //            gI.at<uchar>(i,j) = 1.0 /  sqrt(1.0 + alpha * grad.at<uchar>(i,j));
 //        }
 //    }
+
+}
+
+void morph_gac(const cv::Mat &gI, const cv::Mat &gI_threshold_mask, cv::Mat &u, double gI_balloon_v)
+{
+
 
 }
