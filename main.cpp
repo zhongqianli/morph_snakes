@@ -7,6 +7,9 @@ using namespace cv;
 
 int main()
 {
+    double begin_time;
+    double end_time;
+    double t;
     string imagepath = "image.bmp";
     string maskpath = "image_mask.bmp";
 
@@ -41,6 +44,8 @@ int main()
     double alpha = 2;
     double sigma = 2;
 
+    begin_time = getTickCount();
+
     gborders(image_64F, gI_64F, alpha, sigma);
 
 //    for(int i=0; i<image.rows; ++i)
@@ -59,7 +64,7 @@ int main()
     int num_smoothing = 1;
     double gI_threshold = 0.17;
     double gI_balloon_v = 1;
-    int num_iters = 200;
+    int num_iters = 80;
 
     Mat mask_64F;
     mask.convertTo(mask_64F, image_64F.type());
@@ -73,19 +78,32 @@ int main()
     cv::Mat derivative_gI_Y(image_64F.size(), image_64F.type(), cv::Scalar(0));
     calc_derivative(gI_64F, derivative_gI_X, derivative_gI_Y);
 
+    cvtColor(image, image, CV_GRAY2BGR);
+
     for(int i=0; i<num_iters; ++i)
     {
         morph_gac(gI_threshold_mask, derivative_gI_X, derivative_gI_Y, mask_64F, gI_balloon_v);
         imshow("mask_64F", mask_64F);
-        waitKey(1);
+
+        mask_64F.convertTo(mask, CV_8UC1);
+        Canny(mask, mask, 30, 120);
+        threshold(mask, mask, 255, 255, cv::THRESH_BINARY_INV|cv::THRESH_OTSU);
+        Mat image_res;
+        image.copyTo(image_res, mask);
+        imshow("image_res", image_res);
+        waitKey(100);
     }
+
+    end_time = getTickCount();
+    t = (end_time - begin_time)*1000 / getTickFrequency();
+    cout << "total time: " << (int)t << " ms" << endl ;
 
     cout << "finish" << endl;
 
 //    imshow("gI", gI_64F);
 
 
-
+    imshow("mask_64F", mask_64F);
 
     waitKey(30000);
 
