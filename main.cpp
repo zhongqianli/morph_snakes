@@ -1,12 +1,13 @@
 #include <iostream>
 #include <opencv2/opencv.hpp>
 #include "morph_snakes.h"
+#include <stdlib.h>
 
 using namespace std;
 using namespace cv;
 
 #define SNAKE_DEBUG 1
-//#define SNAKE_DEMO_DEBUG 1
+#define SNAKE_DEMO_DEBUG 1
 
 int main(int argc, char* argv[])
 {
@@ -17,14 +18,24 @@ int main(int argc, char* argv[])
     double t;
 #endif
 
-    if(argc != 3)
+    if(argc != 7)
     {
-        cout << "usage: " << argv[0] << " <image_path> <image_mask_path>" << endl;
+        cout << "usage: " << argv[0] << " <image_path> <mask_path> <alpha> <sigma> <gI_threshold> <gI_balloon_v>" << endl;
         return -1;
     }
 
     string imagepath = argv[1];
     string maskpath = argv[2];
+
+    // g(I) parameter, 2
+    double alpha = atof(argv[3]);
+    // standard variance of gassian blur, 3
+    double sigma = atof(argv[4]);
+
+    // gI_binary_threshold, 0.17
+    double gI_threshold = atof(argv[5]);
+    // ballon force, gI_binary_threshold; 1 expand, -1 shrink;
+    double gI_balloon_v = atof(argv[6]);
 
     Mat image = imread(imagepath, CV_LOAD_IMAGE_GRAYSCALE);
     Mat mask = imread(maskpath, CV_LOAD_IMAGE_GRAYSCALE);
@@ -55,10 +66,7 @@ int main(int argc, char* argv[])
     image.convertTo(image_F, SNAKE_DATA_TYPE);
 
     Mat gI_F(image_F.size(), SNAKE_DATA_TYPE);
-    // g(I) parameter
-    double alpha = 2;
-    // standard variance of gassian blur
-    double sigma = 3;
+
     // g(I)
     gborders(image_F, gI_F, alpha, sigma);
 
@@ -71,9 +79,6 @@ int main(int argc, char* argv[])
 #ifdef SNAKE_DEBUG
     begin_time = getTickCount();
 #endif
-
-    double gI_threshold = 0.17;
-    double gI_balloon_v = 1;
 
     Mat mask_F;
     mask.convertTo(mask_F, SNAKE_DATA_TYPE);
@@ -105,7 +110,7 @@ int main(int argc, char* argv[])
     begin_time = getTickCount();
 #endif
 
-    int num_iters = 35;
+    int num_iters = 200;
     for(int i=0; i<num_iters; ++i)
     {
         mask_F.convertTo(mask_F, SNAKE_DATA_TYPE);
