@@ -3,6 +3,8 @@
 
 #include <opencv2/opencv.hpp>
 
+#define SNAKE_DATA_TYPE CV_64FC1
+
 void gborders(const cv::Mat &image, cv::Mat &gI, double alpha, double sigma);
 void get_gI_threshold_mask(const cv::Mat &gI, cv::Mat &gI_threshold_mask, double gI_threshold, double gI_balloon_v);
 void calc_derivative(const cv::Mat &image, cv::Mat &derivative_X, cv::Mat &derivative_Y);

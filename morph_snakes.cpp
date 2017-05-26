@@ -46,13 +46,13 @@ void gborders(const cv::Mat &image, cv::Mat &gI, double alpha, double sigma)
     //    cv::convertScaleAbs(grad_y, abs_grad_y);
 
     // gradient
-    cv::pow(grad_x, 2, grad_x);
-    cv::pow(grad_y, 2, grad_y);
-    cv::add(grad_x, grad_y, grad);
-    cv::sqrt(grad, grad);
+//    cv::pow(grad_x, 2, grad_x);
+//    cv::pow(grad_y, 2, grad_y);
+//    cv::add(grad_x, grad_y, grad);
+//    cv::sqrt(grad, grad);
 
-    //    cv::Mat angle;
-    //    cv::cartToPolar(grad_x, grad_y, grad, angle);
+    cv::Mat angle;
+    cv::cartToPolar(grad_x, grad_y, grad, angle);
 
     // g(I)
     gI = alpha*grad + 1e-20;
