@@ -51,7 +51,7 @@ int main()
     int num_smoothing = 1;
     double gI_threshold = 0.17;
     double gI_balloon_v = 1;
-    int num_iters = 200;
+    int num_iters = 100;
 
     Mat mask_64F;
     mask.convertTo(mask_64F, image_64F.type());
@@ -71,7 +71,7 @@ int main()
 
         // step.1 & step.2
         morph_gac(gI_threshold_mask, derivative_gI_X, derivative_gI_Y, mask_64F, gI_balloon_v);
-        imshow("mask_64F", mask_64F);
+//        imshow("mask_64F", mask_64F);
 
         mask_64F.convertTo(mask_64F, CV_8UC1);
 
@@ -80,6 +80,10 @@ int main()
 //        {
 //            SIoIS(mask_64F);
 //        }
+
+        // replace step.3
+        // smoothing curve
+        medianBlur(mask_64F, mask_64F, 3);
 
         Canny(mask_64F, mask, 30, 120);
         threshold(mask, mask, 255, 255, cv::THRESH_BINARY_INV|cv::THRESH_OTSU);
