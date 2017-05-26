@@ -99,7 +99,7 @@ int main()
     begin_time = getTickCount();
 #endif
 
-    int num_iters = 60;
+    int num_iters = 35;
     for(int i=0; i<num_iters; ++i)
     {
         mask_F.convertTo(mask_F, SNAKE_DATA_TYPE);
@@ -123,7 +123,8 @@ int main()
         cv::Mat res;
         image.copyTo(res, mask);
         imshow("res", res);
-        waitKey(100);
+        waitKey(500);
+        cout << "num_iters: " << i << endl;
 #endif
 
     }
