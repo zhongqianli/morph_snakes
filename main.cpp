@@ -6,9 +6,14 @@ using namespace std;
 using namespace cv;
 
 #define SNAKE_DEBUG 1
-#define SNAKE_DEMO_DEBUG 1
+//#define SNAKE_DEMO_DEBUG 1
 
-int main()
+void usage(char** argv)
+{
+    cout << "usage: morph_snakes.exe image_path image_mask_path" << endl;
+}
+
+int main(int argc, char* argv[])
 {
 #ifdef SNAKE_DEBUG
     double begin_time;
@@ -17,8 +22,14 @@ int main()
     double t;
 #endif
 
-    string imagepath = "image.bmp";
-    string maskpath = "image_mask.bmp";
+    if(argc < 3)
+    {
+        usage(argv);
+        return -1;
+    }
+
+    string imagepath = argv[1];
+    string maskpath = argv[2];
 
     Mat image = imread(imagepath, CV_LOAD_IMAGE_GRAYSCALE);
     Mat mask = imread(maskpath, CV_LOAD_IMAGE_GRAYSCALE);
@@ -123,8 +134,8 @@ int main()
         cv::Mat res;
         image.copyTo(res, mask);
         imshow("res", res);
-        waitKey(500);
-        cout << "num_iters: " << i << endl;
+        waitKey(200);
+        cout << "num_iters: " << i+1 << endl;
 #endif
 
     }
@@ -160,7 +171,7 @@ int main()
     image_copy.copyTo(res, mask);
     imwrite("result.bmp", res);
 
-#if SNAKE_DEMO_DEBUG || SNAKE_DEBUG
+#if SNAKE_DEMO_DEBUG
     imshow("res", res);
 #endif
 
