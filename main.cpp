@@ -7,11 +7,7 @@ using namespace std;
 using namespace cv;
 
 #define SNAKE_DEBUG 1
-<<<<<<< HEAD
-#define SNAKE_DEMO_DEBUG 1
-=======
 //#define SNAKE_DEMO_DEBUG 1
->>>>>>> 5ee2fb871c8d927fa7492ab5ffd5adb423f64b78
 
 int main(int argc, char* argv[])
 {
@@ -22,15 +18,9 @@ int main(int argc, char* argv[])
     double t;
 #endif
 
-<<<<<<< HEAD
-    if(argc != 7)
+    if(argc != 8)
     {
-        cout << "usage: " << argv[0] << " <image_path> <mask_path> <alpha> <sigma> <gI_threshold> <gI_balloon_v>" << endl;
-=======
-    if(argc != 3)
-    {
-        cout << "usage: " << argv[0] << " image_path image_mask_path" << endl;
->>>>>>> 5ee2fb871c8d927fa7492ab5ffd5adb423f64b78
+        cout << "usage: " << argv[0] << " <image_path> <mask_path> <alpha> <sigma> <gI_threshold> <gI_balloon_v> <num_iters>" << endl;
         return -1;
     }
 
@@ -46,6 +36,9 @@ int main(int argc, char* argv[])
     double gI_threshold = atof(argv[5]);
     // ballon force, gI_binary_threshold; 1 expand, -1 shrink;
     double gI_balloon_v = atof(argv[6]);
+
+    // num of iteration
+    int num_iters = atof(argv[7]);
 
     Mat image = imread(imagepath, CV_LOAD_IMAGE_GRAYSCALE);
     Mat mask = imread(maskpath, CV_LOAD_IMAGE_GRAYSCALE);
@@ -120,7 +113,6 @@ int main(int argc, char* argv[])
     begin_time = getTickCount();
 #endif
 
-    int num_iters = 200;
     for(int i=0; i<num_iters; ++i)
     {
         mask_F.convertTo(mask_F, SNAKE_DATA_TYPE);
@@ -180,6 +172,7 @@ int main(int argc, char* argv[])
     threshold(mask, mask, 255, 255, cv::THRESH_BINARY_INV|cv::THRESH_OTSU);
     image_copy.copyTo(res, mask);
     imwrite("result.bmp", res);
+    imwrite("result_mask.bmp", mask_F);
 
 #if SNAKE_DEMO_DEBUG
     imshow("res", res);
