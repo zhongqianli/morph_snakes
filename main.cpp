@@ -5,8 +5,8 @@
 using namespace std;
 using namespace cv;
 
-#define SNAKE_DEBUG
-#define SNAKE_DEMO_DEBUG
+#define SNAKE_DEBUG 1
+#define SNAKE_DEMO_DEBUG 1
 
 int main()
 {
@@ -34,6 +34,8 @@ int main()
         cout << "read mask failed." << endl;
         return -1;
     }
+
+    cv::Mat image_copy = image.clone();
 
     // median blur
     medianBlur(image, image, 13);
@@ -100,14 +102,11 @@ int main()
     int num_iters = 60;
     for(int i=0; i<num_iters; ++i)
     {
-
-#ifdef SNAKE_DEMO_DEBUG
         mask_F.convertTo(mask_F, SNAKE_DATA_TYPE);
-#endif
 
         // step.1 & step.2
+        // mask_F input type: SNAKE_DATA_TYPE; mask_F output type: CV_8UC1
         morph_gac(gI_threshold_mask, derivative_gI_X, derivative_gI_Y, mask_F, gI_balloon_v);
-
 
 //        // step.3 ; ISoSI can use in iterations or use it out of iterations
 //          ISoSI(mask_F);
@@ -116,11 +115,12 @@ int main()
 //        // smoothing curve
 //        medianBlur(mask_F, mask_F, 3);
 
-#ifdef SNAKE_DEMO_DEBUG
         mask_F.convertTo(mask_F, CV_8UC1);
+
+#ifdef SNAKE_DEMO_DEBUG
         Canny(mask_F, mask, 30, 120);
         threshold(mask, mask, 255, 255, cv::THRESH_BINARY_INV|cv::THRESH_OTSU);
-        Mat res;
+        cv::Mat res;
         image.copyTo(res, mask);
         imshow("res", res);
         waitKey(100);
@@ -153,12 +153,19 @@ int main()
     cout << "total time: " << (int)t << " ms" << endl ;
 #endif
 
-#ifdef SNAKE_DEMO_DEBUG
+    Mat res;
     Canny(mask_F, mask, 30, 120);
     threshold(mask, mask, 255, 255, cv::THRESH_BINARY_INV|cv::THRESH_OTSU);
-    Mat res;
-    image.copyTo(res, mask);
+    image_copy.copyTo(res, mask);
+    imwrite("result.bmp", res);
+
+#if SNAKE_DEMO_DEBUG || SNAKE_DEBUG
     imshow("res", res);
+#endif
+
+    cout << "finished." << endl;
+
+#if SNAKE_DEBUG || SNAKE_DEMO_DEBUG
     waitKey(30000);
 #endif
 

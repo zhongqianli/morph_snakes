@@ -52,7 +52,7 @@ void gborders(const cv::Mat &image, cv::Mat &gI, double alpha, double sigma)
  * @param gI_threshold_mask
  * @param derivative_gI_X
  * @param derivative_gI_Y
- * @param u: mask
+ * @param u: mask. input type: SNAKE_DATA_TYPE; output type: CV_8UC1
  * @param gI_balloon_v: >0 ? dilate : erode
  */
 void morph_gac(const cv::Mat &gI_threshold_mask, const cv::Mat &derivative_gI_X, const cv::Mat &derivative_gI_Y, cv::Mat &u, double gI_balloon_v)
@@ -65,13 +65,11 @@ void morph_gac(const cv::Mat &gI_threshold_mask, const cv::Mat &derivative_gI_X,
     {
         cv::dilate(u, aux, se);
         aux.copyTo(u, gI_threshold_mask);
-//        u.convertTo(u, CV_64FC1);
     }
     else if(gI_balloon_v < 0)
     {
         cv::erode(u, aux, se);
         aux.copyTo(u, gI_threshold_mask);
-//        u.convertTo(u, CV_64FC1);
     }
 
     // step.2
@@ -79,10 +77,6 @@ void morph_gac(const cv::Mat &gI_threshold_mask, const cv::Mat &derivative_gI_X,
     calc_derivative(u, derivative_u_X, derivative_u_Y);
     cv::Mat res = derivative_gI_X.mul(derivative_u_X) + derivative_gI_Y.mul(derivative_u_Y);
     res.convertTo(res, CV_8UC1);
-
-//    cv::imshow("res test", res);
-
-//    cv::waitKey(1);
 
     for(int i=0; i<res.rows; ++i)
     {
