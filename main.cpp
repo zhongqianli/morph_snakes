@@ -51,7 +51,7 @@ int main()
     int num_smoothing = 1;
     double gI_threshold = 0.17;
     double gI_balloon_v = 1;
-    int num_iters = 100;
+    int num_iters = 60;
 
     Mat mask_64F;
     mask.convertTo(mask_64F, image_64F.type());
@@ -75,15 +75,15 @@ int main()
 
         mask_64F.convertTo(mask_64F, CV_8UC1);
 
-        // step.3   没有起到应有的作用，原因未知。
+//        // step.3   没有起到应有的作用，原因未知。
 //        for(int j=0; j<num_smoothing; j++)
 //        {
-//            SIoIS(mask_64F);
+//            ISoSI(mask_64F);
 //        }
 
-        // replace step.3
-        // smoothing curve
-        medianBlur(mask_64F, mask_64F, 3);
+//        // replace step.3
+//        // smoothing curve
+//        medianBlur(mask_64F, mask_64F, 3);
 
         Canny(mask_64F, mask, 30, 120);
         threshold(mask, mask, 255, 255, cv::THRESH_BINARY_INV|cv::THRESH_OTSU);
@@ -93,12 +93,26 @@ int main()
         waitKey(100);
     }
 
+    // step.3   没有起到应有的作用，原因未知。
+    for(int j=0; j<num_smoothing; j++)
+    {
+        ISoSI(mask_64F);
+    }
+
     end_time = getTickCount();
     t = (end_time - begin_time)*1000 / getTickFrequency();
 
     cout << "total time: " << (int)t << " ms" << endl ;
 
     cout << "finish" << endl;
+
+    Canny(mask_64F, mask, 30, 120);
+    threshold(mask, mask, 255, 255, cv::THRESH_BINARY_INV|cv::THRESH_OTSU);
+    Mat res;
+    image.copyTo(res, mask);
+    imshow("res", res);
+    waitKey(100);
+
 
     //    imshow("gI", gI_64F);
 

@@ -226,7 +226,7 @@ void IS(cv::Mat &u)
     cv::Mat res = cv::Mat::ones(u.size(), u.type());
     for(int i=0; i<4; ++i)
     {
-        cv::erode(u, aux[i], P[i]);
+        cv::dilate(u, aux[i], P[i]);
         res = res.mul(aux[i]);
     }
     u = res.clone();
@@ -272,7 +272,7 @@ void SI(cv::Mat &u)
     cv::Mat res = cv::Mat::zeros(u.size(), u.type());
     for(int i=0; i<4; ++i)
     {
-        cv::dilate(u, aux[i], P[i]);
+        cv::erode(u, aux[i], P[i]);
         res = res + aux[i];
     }
     u = res.clone();
@@ -286,4 +286,14 @@ void SIoIS(cv::Mat &u)
 {
     IS(u);
     SI(u);
+}
+
+/**
+ * @brief ISoSI:  smoothing force; step.3
+ * @param u: mask
+ */
+void ISoSI(cv::Mat &u)
+{
+    SI(u);
+    IS(u);
 }

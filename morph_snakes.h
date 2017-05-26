@@ -9,6 +9,7 @@ void calc_derivative(const cv::Mat &image, cv::Mat &derivative_X, cv::Mat &deriv
 void IS(cv::Mat &u);
 void SI(cv::Mat &u);
 void SIoIS(cv::Mat &u);
+void ISoSI(cv::Mat &u);
 void morph_gac(const cv::Mat &gI_threshold_mask, const cv::Mat &derivative_gI_X, const cv::Mat &derivative_gI_Y, cv::Mat &u, double gI_balloon_v);
 
 #endif // MORPH_SNAKES_H
