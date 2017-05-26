@@ -8,11 +8,6 @@ using namespace cv;
 #define SNAKE_DEBUG 1
 //#define SNAKE_DEMO_DEBUG 1
 
-void usage(char** argv)
-{
-    cout << "usage: morph_snakes.exe image_path image_mask_path" << endl;
-}
-
 int main(int argc, char* argv[])
 {
 #ifdef SNAKE_DEBUG
@@ -22,9 +17,9 @@ int main(int argc, char* argv[])
     double t;
 #endif
 
-    if(argc < 3)
+    if(argc != 3)
     {
-        usage(argv);
+        cout << "usage: " << argv[0] << " image_path image_mask_path" << endl;
         return -1;
     }
 
