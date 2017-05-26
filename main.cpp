@@ -6,7 +6,7 @@ using namespace std;
 using namespace cv;
 
 #define SNAKE_DEBUG
-//#define SNAKE_DEMO_DEBUG
+#define SNAKE_DEMO_DEBUG
 
 int main()
 {

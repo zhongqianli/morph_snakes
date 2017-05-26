@@ -103,7 +103,7 @@ void morph_gac(const cv::Mat &gI_threshold_mask, const cv::Mat &derivative_gI_X,
 /**
  * @brief get_gI_threshold_mask
  * @param gI
- * @param gI_threshold_mask
+ * @param gI_threshold_mask: CV_8UC1
  * @param gI_threshold
  * @param gI_balloon_v
  */
@@ -134,13 +134,8 @@ void calc_derivative(const cv::Mat &image, cv::Mat &derivative_X, cv::Mat &deriv
     int delta = 0;
     int ddepth = image.type();
 
-    // Scharr function , 3x3, as fast but more accurate than the standar Sobel function
-//    cv::Scharr(image, derivative_X, ddepth, 1, 0, scale, delta, cv::BORDER_DEFAULT);
     cv::Sobel(image, derivative_X, ddepth, 1, 0, 3, scale, delta, cv::BORDER_DEFAULT);
-
-//    cv::Scharr(image, derivative_Y, ddepth, 1, 0, scale, delta, cv::BORDER_DEFAULT);
     cv::Sobel(image, derivative_Y, ddepth, 0, 1, 3, scale, delta, cv::BORDER_DEFAULT);
-
 }
 
 /**
