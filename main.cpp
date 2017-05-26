@@ -7,7 +7,11 @@ using namespace std;
 using namespace cv;
 
 #define SNAKE_DEBUG 1
+<<<<<<< HEAD
 //#define SNAKE_DEMO_DEBUG 1
+=======
+#define SNAKE_DEMO_DEBUG 1
+>>>>>>> 36f6d82bf0e8a92ee538aeddbd8112fbf934ff6b
 
 int main(int argc, char* argv[])
 {
@@ -18,9 +22,15 @@ int main(int argc, char* argv[])
     double t;
 #endif
 
+<<<<<<< HEAD
     if(argc != 8)
     {
         cout << "usage: " << argv[0] << " <image_path> <mask_path> <alpha> <sigma> <gI_threshold> <gI_balloon_v> <num_iters>" << endl;
+=======
+    if(argc != 7)
+    {
+        cout << "usage: " << argv[0] << " <image_path> <mask_path> <alpha> <sigma> <gI_threshold> <gI_balloon_v>" << endl;
+>>>>>>> 36f6d82bf0e8a92ee538aeddbd8112fbf934ff6b
         return -1;
     }
 
