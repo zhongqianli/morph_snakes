@@ -20,7 +20,7 @@ int main(int argc, char* argv[])
 
     if(argc != 8)
     {
-        cout << "usage: " << argv[0] << " <image_path> <mask_path> <alpha> <sigma> <gI_threshold> <gI_balloon_v> <num_iters>" << endl;
+        printf("usage: %s <image_path> <mask_path> <alpha> <sigma> <gI_threshold> <gI_balloon_v> <num_iters>\n", argv[0]);
         return -1;
     }
 
@@ -45,13 +45,13 @@ int main(int argc, char* argv[])
 
     if(image.empty())
     {
-        cout << "read image failed." << endl;
+        printf("read image failed.\n");
         return -1;
     }
 
     if(mask.empty())
     {
-        cout << "read mask failed." << endl;
+        printf("read mask failed.\n");
         return -1;
     }
 
@@ -76,7 +76,7 @@ int main(int argc, char* argv[])
 #ifdef SNAKE_DEBUG
     end_time = getTickCount();
     t = (end_time - begin_time)*1000 / getTickFrequency();
-    cout << "time of gborders: " << (int)t << " ms" << endl ;
+    printf("time of gborders: %d ms.\n", (int)t);
 #endif
 
 #ifdef SNAKE_DEBUG
@@ -92,7 +92,7 @@ int main(int argc, char* argv[])
 #ifdef SNAKE_DEBUG
     end_time = getTickCount();
     t = (end_time - begin_time)*1000 / getTickFrequency();
-    cout << "time of get_gI_threshold_mask: " << (int)t << " ms" << endl ;
+    printf("time of get_gI_threshold_mask: %d ms.\n", (int)t);
 #endif
 
 #ifdef SNAKE_DEBUG
@@ -106,7 +106,7 @@ int main(int argc, char* argv[])
 #ifdef SNAKE_DEBUG
     end_time = getTickCount();
     t = (end_time - begin_time)*1000 / getTickFrequency();
-    cout << "time of calc_derivative: " << (int)t << " ms" << endl ;
+    printf("time of calc_derivative: %d ms.\n", (int)t);
 #endif
 
 #ifdef SNAKE_DEBUG
@@ -137,7 +137,7 @@ int main(int argc, char* argv[])
         image.copyTo(res, mask);
         imshow("res", res);
         waitKey(200);
-        cout << "num_iters: " << i+1 << endl;
+        printf("num_iters: %d\n", i+1);
 #endif
 
     }
@@ -145,7 +145,7 @@ int main(int argc, char* argv[])
 #ifdef SNAKE_DEBUG
     end_time = getTickCount();
     t = (end_time - begin_time)*1000 / getTickFrequency();
-    cout << "time of morph_gac iterations: " << (int)t << " ms" << endl ;
+    printf("time of morph_gac iterations: %d ms.\n", (int)t);
 #endif
 
 #ifdef SNAKE_DEBUG
@@ -158,13 +158,13 @@ int main(int argc, char* argv[])
 #ifdef SNAKE_DEBUG
     end_time = getTickCount();
     t = (end_time - begin_time)*1000 / getTickFrequency();
-    cout << "time of ISoSI: " << (int)t << " ms" << endl ;
+    printf("time of ISoSI: %d ms.\n", (int)t);
 #endif
 
 #ifdef SNAKE_DEBUG
     end_time = getTickCount();
     t = (end_time - total_begin_time)*1000 / getTickFrequency();
-    cout << "total time: " << (int)t << " ms" << endl ;
+    printf("total time: %d ms.\n", (int)t);
 #endif
 
     Mat res;
@@ -178,7 +178,7 @@ int main(int argc, char* argv[])
     imshow("res", res);
 #endif
 
-    cout << "finished." << endl;
+    printf("finished.\n");
 
 #if SNAKE_DEBUG || SNAKE_DEMO_DEBUG
     waitKey(30000);
