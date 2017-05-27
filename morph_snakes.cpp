@@ -4,7 +4,7 @@
 #include <iostream>
 #include <stdlib.h>
 
-#define SNAKE_DEBUG
+#define MORPH_GAC_DEBUG
 
 using namespace std;
 
@@ -60,13 +60,13 @@ void gborders(const cv::Mat &image, cv::Mat &gI, double alpha, double sigma)
  */
 void morph_gac(const cv::Mat &gI_threshold_mask, const cv::Mat &derivative_gI_X, const cv::Mat &derivative_gI_Y, cv::Mat &u, double gI_balloon_v)
 {
-#ifdef SNAKE_DEBUG
+#ifdef MORPH_GAC_DEBUG
     double begin_time;
     double end_time;
     double t;
 #endif
 
-#ifdef SNAKE_DEBUG
+#ifdef MORPH_GAC_DEBUG
     begin_time = cv::getTickCount();
 #endif
 
@@ -74,7 +74,7 @@ void morph_gac(const cv::Mat &gI_threshold_mask, const cv::Mat &derivative_gI_X,
     cv::Mat aux;
     cv::Mat se = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(3,3));
 
-#ifdef SNAKE_DEBUG
+#ifdef MORPH_GAC_DEBUG
     end_time = cv::getTickCount();
     t = (end_time - begin_time)*1000 / cv::getTickFrequency();
     printf("[morph_gac]time of getStructuringElement: %d ms.\n", (int)t);
@@ -92,7 +92,7 @@ void morph_gac(const cv::Mat &gI_threshold_mask, const cv::Mat &derivative_gI_X,
 //        aux.copyTo(u, gI_threshold_mask);
 //    }
 
-#ifdef SNAKE_DEBUG
+#ifdef MORPH_GAC_DEBUG
     begin_time = cv::getTickCount();
 #endif
 
@@ -100,13 +100,13 @@ void morph_gac(const cv::Mat &gI_threshold_mask, const cv::Mat &derivative_gI_X,
     cv::dilate(u, aux, se);
     aux.copyTo(u, gI_threshold_mask);
 
-#ifdef SNAKE_DEBUG
+#ifdef MORPH_GAC_DEBUG
     end_time = cv::getTickCount();
     t = (end_time - begin_time)*1000 / cv::getTickFrequency();
     printf("[morph_gac]time of dilate: %d ms.\n", (int)t);
 #endif
 
-#ifdef SNAKE_DEBUG
+#ifdef MORPH_GAC_DEBUG
     begin_time = cv::getTickCount();
 #endif
 
@@ -114,26 +114,26 @@ void morph_gac(const cv::Mat &gI_threshold_mask, const cv::Mat &derivative_gI_X,
     cv::Mat derivative_u_X, derivative_u_Y;
     calc_derivative(u, derivative_u_X, derivative_u_Y);
 
-#ifdef SNAKE_DEBUG
+#ifdef MORPH_GAC_DEBUG
     end_time = cv::getTickCount();
     t = (end_time - begin_time)*1000 / cv::getTickFrequency();
     printf("[morph_gac]time of calc_derivative: %d ms.\n", (int)t);
 #endif
 
-#ifdef SNAKE_DEBUG
+#ifdef MORPH_GAC_DEBUG
     begin_time = cv::getTickCount();
 #endif
 
     cv::Mat res = derivative_gI_X.mul(derivative_u_X) + derivative_gI_Y.mul(derivative_u_Y);
     res.convertTo(res, CV_8UC1);
 
-#ifdef SNAKE_DEBUG
+#ifdef MORPH_GAC_DEBUG
     end_time = cv::getTickCount();
     t = (end_time - begin_time)*1000 / cv::getTickFrequency();
     printf("[morph_gac]time of derivative multiply: %d ms.\n", (int)t);
 #endif
 
-#ifdef SNAKE_DEBUG
+#ifdef MORPH_GAC_DEBUG
     begin_time = cv::getTickCount();
 #endif
 
@@ -152,7 +152,7 @@ void morph_gac(const cv::Mat &gI_threshold_mask, const cv::Mat &derivative_gI_X,
         }
     }
 
-#ifdef SNAKE_DEBUG
+#ifdef MORPH_GAC_DEBUG
     end_time = cv::getTickCount();
     t = (end_time - begin_time)*1000 / cv::getTickFrequency();
     printf("[morph_gac]time of res 2 u iterations: %d ms.\n", (int)t);
