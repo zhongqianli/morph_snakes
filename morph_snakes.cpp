@@ -4,7 +4,7 @@
 #include <iostream>
 #include <stdlib.h>
 
-#define MORPH_GAC_DEBUG
+//#define MORPH_GAC_DEBUG
 
 using namespace std;
 
@@ -55,7 +55,7 @@ void gborders(const cv::Mat &image, cv::Mat &gI, double alpha, double sigma)
  * @param gI_threshold_mask: CV_8UC1
  * @param derivative_gI_X
  * @param derivative_gI_Y
- * @param u: mask. input type: SNAKE_DATA_TYPE; output type: CV_8UC1
+ * @param u: mask. input type: CV_8UC1; output type: CV_8UC1
  * @param gI_balloon_v: >0 ? dilate : erode
  */
 void morph_gac(const cv::Mat &gI_threshold_mask, const cv::Mat &derivative_gI_X, const cv::Mat &derivative_gI_Y, cv::Mat &u, double gI_balloon_v)
@@ -71,7 +71,6 @@ void morph_gac(const cv::Mat &gI_threshold_mask, const cv::Mat &derivative_gI_X,
 #endif
 
     // step.1
-    cv::Mat aux;
     cv::Mat se = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(3,3));
 
 #ifdef MORPH_GAC_DEBUG
@@ -92,18 +91,33 @@ void morph_gac(const cv::Mat &gI_threshold_mask, const cv::Mat &derivative_gI_X,
 //        aux.copyTo(u, gI_threshold_mask);
 //    }
 
+    cv::Mat aux(u.size(), CV_8UC1);
+
 #ifdef MORPH_GAC_DEBUG
     begin_time = cv::getTickCount();
 #endif
 
     // optimize : remove if ... else ..., just expand contour
+    // t: 0ms
     cv::dilate(u, aux, se);
-    aux.copyTo(u, gI_threshold_mask);
 
 #ifdef MORPH_GAC_DEBUG
     end_time = cv::getTickCount();
     t = (end_time - begin_time)*1000 / cv::getTickFrequency();
     printf("[morph_gac]time of dilate: %d ms.\n", (int)t);
+#endif
+
+#ifdef MORPH_GAC_DEBUG
+    begin_time = cv::getTickCount();
+#endif
+
+    // t: 0ms
+    aux.copyTo(u, gI_threshold_mask);
+
+#ifdef MORPH_GAC_DEBUG
+    end_time = cv::getTickCount();
+    t = (end_time - begin_time)*1000 / cv::getTickFrequency();
+    printf("[morph_gac]time of copy data: %d ms.\n", (int)t);
 #endif
 
 #ifdef MORPH_GAC_DEBUG
@@ -142,8 +156,6 @@ void morph_gac(const cv::Mat &gI_threshold_mask, const cv::Mat &derivative_gI_X,
             res.at<double>(i,j) = derivative_gI_X.at<double>(i,j)*derivative_u_X.at<double>(i,j) + derivative_gI_Y.at<double>(i,j)*derivative_u_Y.at<double>(i,j);
         }
     }
-    res.convertTo(res, CV_8UC1);
-
 #ifdef MORPH_GAC_DEBUG
     end_time = cv::getTickCount();
     t = (end_time - begin_time)*1000 / cv::getTickFrequency();
@@ -153,18 +165,30 @@ void morph_gac(const cv::Mat &gI_threshold_mask, const cv::Mat &derivative_gI_X,
 #ifdef MORPH_GAC_DEBUG
     begin_time = cv::getTickCount();
 #endif
-    // t: less than 1ms
+    // t: 0ms
+    res.convertTo(res, CV_8UC1);
+
+#ifdef MORPH_GAC_DEBUG
+    end_time = cv::getTickCount();
+    t = (end_time - begin_time)*1000 / cv::getTickFrequency();
+    printf("[morph_gac]time of convertTo: %d ms.\n", (int)t);
+#endif
+
+#ifdef MORPH_GAC_DEBUG
+    begin_time = cv::getTickCount();
+#endif
+    // t: 0ms
     for(int i=0; i<res.rows; ++i)
     {
         for(int j=0; j<res.cols; ++j)
         {
             if(res.at<uchar>(i,j) > 0)
             {
-                u.at<double>(i,j) = 255;
+                u.at<uchar>(i,j) = 255;
             }
             else if(res.at<uchar>(i,j) < 0)
             {
-                u.at<double>(i,j) = 0;
+                u.at<uchar>(i,j) = 0;
             }
         }
     }
