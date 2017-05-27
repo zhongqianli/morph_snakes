@@ -52,7 +52,7 @@ void gborders(const cv::Mat &image, cv::Mat &gI, double alpha, double sigma)
 
 /**
  * @brief morph_gac
- * @param gI_threshold_mask
+ * @param gI_threshold_mask: CV_8UC1
  * @param derivative_gI_X
  * @param derivative_gI_Y
  * @param u: mask. input type: SNAKE_DATA_TYPE; output type: CV_8UC1
@@ -112,7 +112,12 @@ void morph_gac(const cv::Mat &gI_threshold_mask, const cv::Mat &derivative_gI_X,
 
     // step.2
     cv::Mat derivative_u_X, derivative_u_Y;
-    calc_derivative(u, derivative_u_X, derivative_u_Y);
+//    calc_derivative(u, derivative_u_X, derivative_u_Y);
+
+//    // t: 4ms
+    cv::Sobel(u, derivative_u_X, SNAKE_DATA_TYPE, 1, 0, 3, 1, 0, cv::BORDER_DEFAULT);
+    cv::Sobel(u, derivative_u_Y, SNAKE_DATA_TYPE, 0, 1, 3, 1, 0, cv::BORDER_DEFAULT);
+
 
 #ifdef MORPH_GAC_DEBUG
     end_time = cv::getTickCount();
@@ -124,7 +129,19 @@ void morph_gac(const cv::Mat &gI_threshold_mask, const cv::Mat &derivative_gI_X,
     begin_time = cv::getTickCount();
 #endif
 
-    cv::Mat res = derivative_gI_X.mul(derivative_u_X) + derivative_gI_Y.mul(derivative_u_Y);
+    // time: 10ms
+//    cv::Mat res = derivative_gI_X.mul(derivative_u_X) + derivative_gI_Y.mul(derivative_u_Y);
+//    res.convertTo(res, CV_8UC1);
+
+    // t: 2ms
+    cv::Mat res(derivative_gI_X.size(), SNAKE_DATA_TYPE);
+    for(int i=0; i<derivative_gI_X.rows; ++i)
+    {
+        for(int j=0; j<derivative_gI_X.cols; ++j)
+        {
+            res.at<double>(i,j) = derivative_gI_X.at<double>(i,j)*derivative_u_X.at<double>(i,j) + derivative_gI_Y.at<double>(i,j)*derivative_u_Y.at<double>(i,j);
+        }
+    }
     res.convertTo(res, CV_8UC1);
 
 #ifdef MORPH_GAC_DEBUG
@@ -136,7 +153,7 @@ void morph_gac(const cv::Mat &gI_threshold_mask, const cv::Mat &derivative_gI_X,
 #ifdef MORPH_GAC_DEBUG
     begin_time = cv::getTickCount();
 #endif
-
+    // t: less than 1ms
     for(int i=0; i<res.rows; ++i)
     {
         for(int j=0; j<res.cols; ++j)
