@@ -11,11 +11,12 @@ using namespace cv;
 
 int main(int argc, char* argv[])
 {
+    double total_begin_time;
+    double total_end_time;
+    double t;
 #ifdef SNAKE_DEBUG
     double begin_time;
-    double total_begin_time;
     double end_time;
-    double t;
 #endif
 
     if(argc != 8)
@@ -60,9 +61,9 @@ int main(int argc, char* argv[])
     // median blur
     medianBlur(image, image, 13);
 
+    total_begin_time = getTickCount();
 #ifdef SNAKE_DEBUG
     begin_time = getTickCount();
-    total_begin_time = begin_time;
 #endif
 
     Mat image_F;
@@ -164,11 +165,9 @@ int main(int argc, char* argv[])
     printf("time of ISoSI: %d ms.\n", (int)t);
 #endif
 
-#ifdef SNAKE_DEBUG
-    end_time = getTickCount();
-    t = (end_time - total_begin_time)*1000 / getTickFrequency();
+    total_end_time = getTickCount();
+    t = (total_end_time - total_begin_time)*1000 / getTickFrequency();
     printf("total time: %d ms.\n", (int)t);
-#endif
 
     Mat res;
     mask.convertTo(mask, CV_8UC1);
