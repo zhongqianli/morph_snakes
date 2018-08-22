@@ -2,6 +2,7 @@
 
 #include <math.h>
 #include <iostream>
+#include <vector>
 #include <stdlib.h>
 
 //#define MORPH_GAC_DEBUG
@@ -276,7 +277,7 @@ void IS(cv::Mat &u)
     };
     P[3] = cv::Mat(3, 3, CV_8UC1, p3);
 
-    cv::vector<cv::Mat> aux(4);
+    std::vector<cv::Mat> aux(4);
     cv::Mat res = cv::Mat::ones(u.size(), u.type());
     for(int i=0; i<4; ++i)
     {
@@ -322,7 +323,7 @@ void SI(cv::Mat &u)
     };
     P[3] = cv::Mat(3, 3, CV_8UC1, p3);
 
-    cv::vector<cv::Mat> aux(4);
+    std::vector<cv::Mat> aux(4);
     cv::Mat res = cv::Mat::zeros(u.size(), u.type());
     for(int i=0; i<4; ++i)
     {
